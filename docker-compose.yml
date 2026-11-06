@@ -1,0 +1,32 @@
+name: splitwisely
+
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: splitwisely
+    ports:
+      - "5432:5432"
+    volumes:
+      - splitwisely_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d splitwisely"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Optional: run API in Compose after Phase 1 image exists
+  # api:
+  #   build: .
+  #   ports:
+  #     - "3000:3000"
+  #   env_file: .env
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
+volumes:
+  splitwisely_pg:
